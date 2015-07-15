@@ -72,14 +72,25 @@ import java.util.logging.Logger;
 public class ManagedGWTResource {
 
     static final Logger logger = Logger.getLogger("AtmosphereHandler");
+    
+    private class Message implements Serializable {
+            private String msg;
+            public String getMessage() {
+                    return msg;
+            }
+            public void setMessage (String msg) {
+                    this.msg = msg;
+            }
+    }
 
     @Ready
     public void onReady(final AtmosphereResource r) {
         logger.info("Received RPC GET");
         // Look up a new Broadcaster used for pushing who is connected.
         BroadcasterFactory f = r.getAtmosphereConfig().getBroadcasterFactory();
-        f.lookup("Connected users", true).addAtmosphereResource(r)
-                .broadcast("Browser UUID: " + r.uuid() + " connected.");
+        Message m = new Message();
+        m.setMessage("Browser UUID: " + r.uuid() + " connected.")
+        f.lookup("Connected users", true).addAtmosphereResource(r).broadcast(m);
     }
 
     @Disconnect
